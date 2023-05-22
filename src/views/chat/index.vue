@@ -6,12 +6,14 @@ import right from './components/right.vue'
 <template>
   <div class="flex h-full p-4">
     <div class="border flex h-full w-full">
-      <div class="left">
-        <left />
-      </div>
-      <div class="right">
-        <right />
-      </div>
+      <n-layout has-sider>
+        <n-layout-sider width="350px">
+          <left />
+        </n-layout-sider>
+        <n-layout>
+          <right />
+        </n-layout>
+      </n-layout>
     </div>
   </div>
 </template>
@@ -21,6 +23,10 @@ import right from './components/right.vue'
 	border: 2px solid #E0E0E0;
 	border-radius: 20px;
 	overflow: hidden;
+
+	:deep(.n-layout-scroll-container) {
+		overflow: visible;
+	}
 
 	.left {
 		width: 350px;
@@ -32,7 +38,7 @@ import right from './components/right.vue'
 	.right {
 		flex: 1;
 		box-sizing: border-box;
-		background: #F3F3F3;
+		border-left: 2px solid #E0E0E0;
 	}
 }
 </style>

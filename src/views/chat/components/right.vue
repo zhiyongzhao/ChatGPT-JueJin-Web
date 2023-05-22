@@ -3,7 +3,7 @@ import { Send, TimeOutline, TrashOutline } from '@vicons/ionicons5'
 </script>
 
 <template>
-  <div class="right h-full">
+  <div class="right h-full light:bg-[#F3F3F3] dark:bg-[#111111] transition-all">
     <div class="top text-sm font-bold text-gray-900">
       new Chat
     </div>
@@ -17,7 +17,7 @@ import { Send, TimeOutline, TrashOutline } from '@vicons/ionicons5'
             <TrashOutline />
           </NIcon>
         </div>
-        <n-button size="small" type="info">
+        <n-button size="small" type="primary">
           <template #icon>
             <n-icon>
               <Send />

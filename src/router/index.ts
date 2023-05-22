@@ -6,7 +6,12 @@ import { setupPageGuard } from './permission'
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Root',
+    name: 'login',
+    component: () => import('@/views/login/index.vue'),
+  },
+  {
+    path: '/chat',
+    name: 'chat',
     component: () => import('@/views/chat/index.vue'),
   },
 

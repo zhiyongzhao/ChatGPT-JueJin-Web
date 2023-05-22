@@ -1,7 +1,7 @@
-import type { GlobalThemeOverrides } from 'naive-ui'
-import { computed, watch } from 'vue'
-import { darkTheme, useOsTheme } from 'naive-ui'
-import { useAppStore } from '@/store'
+import type { GlobalThemeOverrides } from 'naive-ui' // 引入官方主题自定义类型
+import { computed, watch } from 'vue'	// 引入计算属性和监听属性
+import { darkTheme, useOsTheme } from 'naive-ui' // 引入暗色主题 和 主题判断方法
+import { useAppStore } from '@/store' // 引入vuex
 
 export function useTheme() {
   const appStore = useAppStore()

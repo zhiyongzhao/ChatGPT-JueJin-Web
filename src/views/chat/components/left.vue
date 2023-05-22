@@ -1,51 +1,81 @@
 <script lang="ts" setup>
-import { ChatboxEllipsesOutline, CreateOutline, SettingsOutline, TrashOutline } from '@vicons/ionicons5'
+import { computed, defineAsyncComponent, ref } from 'vue'
+import { SettingsOutline } from '@vicons/ionicons5'
+import List from './List.vue'
+import { useBasicLayout } from '@/hooks/useBasicLayout'
+import { useAppStore, useChatStore, useUserStore } from '@/store'
+
+const userStore = useUserStore()
+const userInfo = computed(() => userStore.userInfo)
+const show = ref(false)
+const Setting = defineAsyncComponent(() => import('@/components/common/Setting/index.vue'))
+
+const chatStore = useChatStore()
+const isMobile = useBasicLayout()
+const appStore = useAppStore()
+
+function handleAdd() {
+  chatStore.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
+  if (isMobile.value)
+    appStore.setSiderCollapsed(true)
+}
 </script>
 
 <template>
-  <div>
+  <div class="h-full dark:bg-[#191919] transition-all chatList">
     <div class="tx">
       <NAvatar
+        :src="userInfo.avatar"
         round
         size="large"
-        src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
       />
       <div>
-        <span class="text-sm font-bold text-blue-500">userName</span>
-        <span>Personal signature</span>
+        <span class="text-base font-bold text-green-500">{{ userInfo.name }}</span>
+        <span class="text-xs" v-html="userInfo.description" />
       </div>
-      <NIcon size="20">
+      <NIcon size="20" @click="show = true">
         <SettingsOutline />
       </NIcon>
     </div>
     <div class="gpt-list">
-      <div class="item">
-        <NIcon size="40">
-          <ChatboxEllipsesOutline />
-        </NIcon>
-        <p class="chat-name text-sm font-bold">
-          new chat
-        </p>
-        <NIcon class="mr-2" size="20">
-          <CreateOutline />
-        </NIcon>
-        <NIcon size="20">
-          <TrashOutline />
-        </NIcon>
-      </div>
+      <List />
+      <!--      <div class="item"> -->
+      <!--        <NIcon size="40"> -->
+      <!--          <ChatboxEllipsesOutline /> -->
+      <!--        </NIcon> -->
+      <!--        <p class="chat-name text-sm font-bold"> -->
+      <!--          new chat -->
+      <!--        </p> -->
+      <!--        <NIcon class="mr-2" size="20"> -->
+      <!--          <CreateOutline /> -->
+      <!--        </NIcon> -->
+      <!--        <NIcon size="20"> -->
+      <!--          <TrashOutline /> -->
+      <!--        </NIcon> -->
+      <!--      </div> -->
     </div>
     <div class="foot">
-      <n-button size="large" style="width: 310px;margin-bottom: 20px" type="info">
+      <n-button
+        secondary size="large" strong style="width: 310px;margin-bottom: 20px" type="primary"
+        @click="handleAdd"
+      >
         新建聊天
       </n-button>
-      <n-button size="large" tertiary type="info">
-        提示词商店
+      <n-button size="large" tertiary type="primary">
+        旧版入口
       </n-button>
     </div>
+    <Setting v-if="show" v-model:visible="show" />
   </div>
 </template>
 
 <style lang="less" scoped>
+.chatList {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
 .tx {
 	display: flex;
 	height: 60px;
@@ -64,6 +94,8 @@ import { ChatboxEllipsesOutline, CreateOutline, SettingsOutline, TrashOutline } 
 
 .gpt-list {
 	width: 100%;
+	flex: 1;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 
@@ -88,9 +120,7 @@ import { ChatboxEllipsesOutline, CreateOutline, SettingsOutline, TrashOutline } 
 }
 
 .foot {
-	position: absolute;
-	bottom: 20px;
-	padding: 0 20px;
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
 }

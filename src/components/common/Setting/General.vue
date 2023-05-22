@@ -143,18 +143,18 @@ function handleImportButtonClick(): void {
           {{ $t('common.save') }}
         </NButton>
       </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>
-        <div class="flex-1">
-          <NInput v-model:value="description" placeholder="" />
-        </div>
-        <NButton size="tiny" text type="primary" @click="updateUserInfo({ description })">
-          {{ $t('common.save') }}
-        </NButton>
-      </div>
+      <!--      <div class="flex items-center space-x-4"> -->
+      <!--        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span> -->
+      <!--        <div class="flex-1"> -->
+      <!--          <NInput v-model:value="description" placeholder="" /> -->
+      <!--        </div> -->
+      <!--        <NButton size="tiny" text type="primary" @click="updateUserInfo({ description })"> -->
+      <!--          {{ $t('common.save') }} -->
+      <!--        </NButton> -->
+      <!--      </div> -->
       <div
-        class="flex items-center space-x-4"
         :class="isMobile && 'items-start'"
+        class="flex items-center space-x-4"
       >
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatHistory') }}</span>
 
@@ -166,7 +166,7 @@ function handleImportButtonClick(): void {
             {{ $t('common.export') }}
           </NButton>
 
-          <input id="fileInput" type="file" style="display:none" @change="importData">
+          <input id="fileInput" style="display:none" type="file" @change="importData">
           <NButton size="small" @click="handleImportButtonClick">
             <template #icon>
               <SvgIcon icon="ri:upload-2-fill" />
@@ -192,8 +192,8 @@ function handleImportButtonClick(): void {
         <div class="flex flex-wrap items-center gap-4">
           <template v-for="item of themeOptions" :key="item.key">
             <NButton
-              size="small"
               :type="item.key === theme ? 'primary' : undefined"
+              size="small"
               @click="appStore.setTheme(item.key)"
             >
               <template #icon>
@@ -207,9 +207,9 @@ function handleImportButtonClick(): void {
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.language') }}</span>
         <div class="flex flex-wrap items-center gap-4">
           <NSelect
-            style="width: 140px"
-            :value="language"
             :options="languageOptions"
+            :value="language"
+            style="width: 140px"
             @update-value="value => appStore.setLanguage(value)"
           />
         </div>
