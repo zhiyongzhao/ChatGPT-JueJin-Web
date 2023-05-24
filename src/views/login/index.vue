@@ -1,24 +1,33 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import type { FormInst } from 'naive-ui'
-import { useLoadingBar, useMessage } from 'naive-ui'
-import { t } from '@/locales'
-import type { UserInfo } from '@/store/modules/user/helper'
-import { useAuthStore, useUserStore } from '@/store'
-import { fetchVerify } from '@/api/login'
+import { ref } from 'vue' // 引入ref对象
+import { useRouter } from 'vue-router' // 引入router对象
+import type { FormInst } from 'naive-ui' // 引入formInst变量类型
+import { useLoadingBar, useMessage } from 'naive-ui' // 引入加载条，信息提示组件
+import { t } from '@/locales' // 语言转译方法
+import type { UserInfo } from '@/store/modules/user/helper' // 用户信息类型
+import { useAuthStore, useUserStore } from '@/store' // 引入token信息， 用户信息
+import { fetchVerify } from '@/api/login' // 验证接口
 
-const router = useRouter()
-const message = useMessage()
-const loadingBar = useLoadingBar()
-const userStore = useUserStore()
+const router = useRouter() // router对象
 
+const message = useMessage() // 信息提示组件api
+
+const loadingBar = useLoadingBar() // loading组件api
+
+const authStore = useAuthStore() // token信息
+
+const userStore = useUserStore() // 用户信息
+
+// 表单组件ref
 const formRef = ref<FormInst | null>(null)
 
+// 表单默认值对象
 const model = ref({
   name: '',
   invitationCode: '',
 })
+
+// 表单提交规则
 const rules = {
   name: {
     required: true,
@@ -38,16 +47,19 @@ const updateUserInfo = (options: Partial<UserInfo>) => {
   message.success(t('common.success'))
 }
 
-const authStore = useAuthStore()
 // 验证方法
 const handleSubmit = () => {
   formRef.value?.validate(async (errors) => {
     if (!errors) {
       loadingBar.start()
       try {
-        const data = await fetchVerify(model.value.invitationCode)
+        // 验证接口
+        await fetchVerify(model.value.invitationCode)
+        // 成功后更新用户信息
         updateUserInfo({ name: model.value.name })
+        // 成功后更新token信息
         authStore.setToken(model.value.invitationCode)
+        // 跳转聊天页面
         router.push('/chat')
       }
       catch (error: any) {
@@ -66,11 +78,12 @@ const handleSubmit = () => {
 
 <template>
   <div class="login h-full w-full">
+    <!-- 公众号二维码 -->
     <img alt="" class="qrCode" src="@/assets/qrcode.jpeg">
     <p class="qrCodeText">
       长按/扫描上方二维码，给公众号发送：邀请码，自动获取
     </p>
-
+    <!-- 表单部分 -->
     <n-form
       ref="formRef"
       :model="model"

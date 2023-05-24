@@ -6,8 +6,9 @@ import { setupAssets, setupScrollbarStyle } from './plugins'
 import { setupStore } from './store'
 import { setupRouter } from './router'
 
-async function bootstrap() {
+async function init() {
   const app = createApp(App)
+
   setupAssets()
 
   setupScrollbarStyle()
@@ -23,4 +24,4 @@ async function bootstrap() {
   app.mount('#app')
 }
 
-bootstrap()
+init()

@@ -1,17 +1,20 @@
 <script lang="ts" setup>
-import left from './components/left.vue'
-import right from './components/right.vue'
+import Sider from './components/Sider.vue' // 侧边栏部分。用户头像。chatgpt聊天对象操作
+import Chat from './components/Chat.vue' // 聊天部分，聊天内容显示，聊天框操作
 </script>
 
+<!-- 页面布局 -->
 <template>
   <div class="flex h-full p-4">
     <div class="border flex h-full w-full">
       <n-layout has-sider>
+        <!-- 侧边栏部分 -->
         <n-layout-sider width="350px">
-          <left />
+          <Sider />
         </n-layout-sider>
+        <!-- 聊天内容部分 -->
         <n-layout>
-          <right />
+          <Chat />
         </n-layout>
       </n-layout>
     </div>
@@ -28,7 +31,7 @@ import right from './components/right.vue'
 		overflow: visible;
 	}
 
-	.left {
+	.Sider {
 		width: 350px;
 		border-right: 2px solid #E0E0E0;
 		box-sizing: border-box;
