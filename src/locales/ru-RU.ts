@@ -29,7 +29,8 @@ export default {
   },
   chat: {
     newChatButton: 'Новый чат',
-    placeholder: 'Спросите меня о чем-нибудь ... (Shift + Enter = перенос строки, "/" для вызова подсказок)',
+    oldVersion: 'Старый вход',
+    placeholder: 'Спросите меня о чем-нибудь ... (Shift + Enter = перенос строки)',
     placeholderMobile: 'Спросите меня о чем-нибудь ...',
     copy: 'Копировать',
     copied: 'Скопировано',
@@ -49,6 +50,7 @@ export default {
     clearHistoryConfirm: 'Вы уверены, что хотите очистить историю чата?',
     preview: 'Предварительный просмотр',
     showRawText: 'Показать как обычный текст',
+    sending: 'Отправить',
   },
   setting: {
     setting: 'Настройки',
@@ -72,6 +74,12 @@ export default {
     httpsProxy: 'HTTPS-прокси',
     balance: 'Баланс API',
     monthlyUsage: 'Ежемесячное использование',
+    namePlaceholder: 'Введите имя',
+    invitationCode: 'Код приглашения',
+    invitationCodePlaceholder: 'Введите код приглашения',
+    QRCode: 'Длинный нажатие / сканирование верхнего QR - кода для отправки на номер Public: код приглашения, автоматический доступ',
+    problemFeedback: 'Обратная связь',
+    wechat: 'Микросвязь',
   },
   store: {
     siderButton: 'Хранилище подсказок',

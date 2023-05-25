@@ -29,7 +29,8 @@ export default {
   },
   chat: {
     newChatButton: 'New Chat',
-    placeholder: 'Ask me anything...(Shift + Enter = line break, "/" to trigger prompts)',
+    oldVersion: 'Old version entrance',
+    placeholder: 'Ask me anything...(Shift + Enter = line break)',
     placeholderMobile: 'Ask me anything...',
     copy: 'Copy',
     copied: 'Copied',
@@ -49,6 +50,7 @@ export default {
     clearHistoryConfirm: 'Are you sure to clear chat history?',
     preview: 'Preview',
     showRawText: 'Show as raw text',
+    sending: 'sending',
   },
   setting: {
     setting: 'Setting',
@@ -72,6 +74,12 @@ export default {
     httpsProxy: 'HTTPS Proxy',
     balance: 'API Balance',
     monthlyUsage: 'Monthly Usage',
+    namePlaceholder: 'Please enter a name',
+    invitationCode: 'Invitation code',
+    invitationCodePlaceholder: 'Please enter the invitation code',
+    QRCode: 'Long press/scan the QR code above and send it to the official account: invitation code, automatically obtained',
+    problemFeedback: 'Problem feedback',
+    wechat: 'each other in wechat',
   },
   store: {
     siderButton: 'Prompt Store',

@@ -29,7 +29,8 @@ export default {
   },
   chat: {
     newChatButton: '새로운 채팅',
-    placeholder: '무엇이든 물어보세요...(Shift + Enter = 줄바꿈, "/"를 눌러서 힌트를 보세요)',
+    oldVersion: '레거시 포털',
+    placeholder: '무엇이든 물어보세요...(Shift + Enter = 줄바꿈)',
     placeholderMobile: '무엇이든 물어보세요...',
     copy: '복사',
     copied: '복사됨',
@@ -49,6 +50,7 @@ export default {
     clearHistoryConfirm: '채팅 기록을 삭제하시겠습니까?',
     preview: '미리보기',
     showRawText: '원본 텍스트로 보기',
+    sending: '발송',
   },
   setting: {
     setting: '설정',
@@ -72,6 +74,12 @@ export default {
     httpsProxy: 'HTTPS 프록시',
     balance: 'API 잔액',
     monthlyUsage: '월 사용량',
+    namePlaceholder: '이름을 입력하십시오',
+    invitationCode: '초대 코드',
+    invitationCodePlaceholder: '초대 코드를 입력하십시오',
+    QRCode: '위 QR코드를 길게 누르거나 스캔하여 대중번호로 보내기: 초대코드, 자동 획득',
+    problemFeedback: '질문 피드백',
+    wechat: '위챗 연락처',
   },
   store: {
     siderButton: '프롬프트 저장소',

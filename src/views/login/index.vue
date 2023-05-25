@@ -6,7 +6,10 @@ import { useLoadingBar, useMessage } from 'naive-ui' // 引入加载条，信息
 import { t } from '@/locales' // 语言转译方法
 import type { UserInfo } from '@/store/modules/user/helper' // 用户信息类型
 import { useAuthStore, useUserStore } from '@/store' // 引入token信息， 用户信息
-import { fetchVerify } from '@/api/login' // 验证接口
+import { fetchVerify } from '@/api/login'// 验证接口
+import { useBasicLayout } from '@/hooks/useBasicLayout'
+
+const { isMobile } = useBasicLayout() // 是否移动端
 
 const router = useRouter() // router对象
 
@@ -32,12 +35,12 @@ const rules = {
   name: {
     required: true,
     trigger: ['blur', 'input'],
-    message: '请输入用户名',
+    message: t('setting.namePlaceholder'),
   },
   invitationCode: {
     required: true,
     trigger: ['blur', 'input'],
-    message: '请输入邀请码',
+    message: t('setting.invitationCodePlaceholder'),
   },
 }
 
@@ -77,39 +80,39 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div class="login h-full w-full">
+  <div class="login h-full w-full p-3">
     <!-- 公众号二维码 -->
     <img alt="" class="qrCode" src="@/assets/qrcode.jpeg">
     <p class="qrCodeText">
-      长按/扫描上方二维码，给公众号发送：邀请码，自动获取
+      {{ t('setting.QRCode') }}
     </p>
     <!-- 表单部分 -->
     <n-form
       ref="formRef"
+      :label-placement="isMobile ? 'top' : 'left'"
       :model="model"
       :rules="rules"
       :style="{
-        width: '600px',
+        width: isMobile ? '100%' : '600px',
       }"
-      label-placement="left"
       label-width="auto"
       require-mark-placement="right-hanging"
     >
-      <n-form-item label="用户名" path="name">
-        <n-input v-model:value="model.name" placeholder="请输入用户名" />
+      <n-form-item :label="`${t('setting.name')}:`" path="name">
+        <n-input v-model:value="model.name" :placeholder="t('setting.namePlaceholder')" />
       </n-form-item>
-      <n-form-item label="邀请码" path="invitationCode">
-        <n-input v-model:value="model.invitationCode" placeholder="请输入邀请码" />
+      <n-form-item :label="`${t('setting.invitationCode')}:`" path="invitationCode">
+        <n-input v-model:value="model.invitationCode" :placeholder="t('setting.invitationCodePlaceholder')" />
       </n-form-item>
     </n-form>
     <n-button
       :style="{
-        width: '300px',
+        width: isMobile ? '70%' : '300px',
       }"
       type="primary"
       @click="handleSubmit"
     >
-      验 证
+      {{ t('common.verify') }}
     </n-button>
   </div>
 </template>

@@ -123,41 +123,37 @@ function handleImportButtonClick(): void {
 </script>
 
 <template>
-  <div class="p-4 space-y-5 min-h-[200px]">
-    <div class="space-y-6">
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
-        <div class="flex-1">
-          <NInput v-model:value="avatar" placeholder="" />
-        </div>
+  <div class="space-y-5 min-h-[200px]">
+    <!--      <div class="flex items-center space-x-4"> -->
+    <!--        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span> -->
+    <!--        <div class="flex-1"> -->
+    <!--          <NInput v-model:value="description" placeholder="" /> -->
+    <!--        </div> -->
+    <!--        <NButton size="tiny" text type="primary" @click="updateUserInfo({ description })"> -->
+    <!--          {{ $t('common.save') }} -->
+    <!--        </NButton> -->
+    <!--      </div> -->
+    <n-form
+      ref="formRef"
+      :label-placement="isMobile ? 'top' : 'left'"
+      label-width="auto"
+      require-mark-placement="right-hanging"
+    >
+      <n-form-item :label="t('setting.avatarLink')" label-style="font-weight: 900">
+        <NInput v-model:value="avatar" class="mr-2" />
         <NButton size="tiny" text type="primary" @click="updateUserInfo({ avatar })">
           {{ $t('common.save') }}
         </NButton>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.name') }}</span>
-        <div class="w-[200px]">
-          <NInput v-model:value="name" placeholder="" />
-        </div>
+      </n-form-item>
+
+      <n-form-item :label="$t('setting.name')" label-style="font-weight: 900">
+        <NInput v-model:value="name" class="mr-2" />
         <NButton size="tiny" text type="primary" @click="updateUserInfo({ name })">
           {{ $t('common.save') }}
         </NButton>
-      </div>
-      <!--      <div class="flex items-center space-x-4"> -->
-      <!--        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span> -->
-      <!--        <div class="flex-1"> -->
-      <!--          <NInput v-model:value="description" placeholder="" /> -->
-      <!--        </div> -->
-      <!--        <NButton size="tiny" text type="primary" @click="updateUserInfo({ description })"> -->
-      <!--          {{ $t('common.save') }} -->
-      <!--        </NButton> -->
-      <!--      </div> -->
-      <div
-        :class="isMobile && 'items-start'"
-        class="flex items-center space-x-4"
-      >
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.chatHistory') }}</span>
+      </n-form-item>
 
+      <n-form-item :label="$t('setting.chatHistory')" label-style="font-weight: 900">
         <div class="flex flex-wrap items-center gap-4">
           <NButton size="small" @click="exportData">
             <template #icon>
@@ -186,9 +182,9 @@ function handleImportButtonClick(): void {
             {{ $t('chat.clearHistoryConfirm') }}
           </NPopconfirm>
         </div>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.theme') }}</span>
+      </n-form-item>
+
+      <n-form-item :label="$t('setting.theme')" label-style="font-weight: 900">
         <div class="flex flex-wrap items-center gap-4">
           <template v-for="item of themeOptions" :key="item.key">
             <NButton
@@ -202,24 +198,22 @@ function handleImportButtonClick(): void {
             </NButton>
           </template>
         </div>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.language') }}</span>
-        <div class="flex flex-wrap items-center gap-4">
-          <NSelect
-            :options="languageOptions"
-            :value="language"
-            style="width: 140px"
-            @update-value="value => appStore.setLanguage(value)"
-          />
-        </div>
-      </div>
-      <div class="flex items-center space-x-4">
-        <span class="flex-shrink-0 w-[100px]">{{ $t('setting.resetUserInfo') }}</span>
+      </n-form-item>
+
+      <n-form-item :label="$t('setting.language')" label-style="font-weight: 900">
+        <NSelect
+          :options="languageOptions"
+          :value="language"
+          style="width: 140px"
+          @update-value="value => appStore.setLanguage(value)"
+        />
+      </n-form-item>
+
+      <n-form-item :label="$t('setting.resetUserInfo')" label-style="font-weight: 900">
         <NButton size="small" @click="handleReset">
           {{ $t('common.reset') }}
         </NButton>
-      </div>
-    </div>
+      </n-form-item>
+    </n-form>
   </div>
 </template>

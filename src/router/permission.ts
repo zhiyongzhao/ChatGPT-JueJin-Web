@@ -1,9 +1,12 @@
 import type { Router } from 'vue-router'
 
 import { useAuthStoreWithout } from '@/store/modules/auth'
+import { useAppStore } from '@/store'
 
 export function setupPageGuard(router: Router) {
   router.beforeEach(async (to, from, next) => {
+    const appStore = useAppStore()
+    appStore.setSiderCollapsed(false)
     const authStore = useAuthStoreWithout()
     if (!authStore.session) {
       try {

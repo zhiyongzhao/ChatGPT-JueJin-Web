@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { Send, TimeOutline, TrashOutline } from '@vicons/ionicons5' // 引入icon
+import { ChevronBack, Send, TimeOutline, TrashOutline } from '@vicons/ionicons5' // 引入icon
 import { computed, ref, watch } from 'vue' // 引入计算属性和ref
+import { useDialog } from 'naive-ui'
 import Message from './Message/index.vue' // 引入消息组件
 import { useChat } from './hooks/useChat' // 操作消息的方法
 import { useScroll } from './hooks/useScroll' // 屏幕滚动的方法
 import { useUsingContext } from './hooks/useUsingContext' // 发送消息模式
-import { useChatStore } from '@/store' // 聊天对象信息
+import { useAppStore, useChatStore } from '@/store' // 聊天对象信息
 import { useBasicLayout } from '@/hooks/useBasicLayout' // 监听是否是移动端
 import { fetchChatAPIProcess } from '@/api' // 消息发送接口
 import { t } from '@/locales' // 语言
@@ -28,7 +29,7 @@ const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll() // �
 
 const chatStore = useChatStore() // 聊天对象信息
 
-const uuid = ref('')
+const uuid = ref(chatStore.active || '')
 watch(
   () => chatStore.active,
   (news) => {
@@ -205,6 +206,117 @@ async function onConversation() {
   }
 }
 
+async function onRegenerate(index: number) {
+  if (loading.value)
+    return
+
+  controller = new AbortController()
+
+  const { requestOptions } = dataSources.value[index]
+
+  let message = requestOptions?.prompt ?? ''
+
+  let options: Chat.ConversationRequest = {}
+
+  if (requestOptions.options)
+    options = { ...requestOptions.options }
+
+  loading.value = true
+
+  updateChat(
+    uuid.value,
+    index,
+    {
+      dateTime: new Date().toLocaleString(),
+      text: '',
+      inversion: false,
+      error: false,
+      loading: true,
+      conversationOptions: null,
+      requestOptions: { prompt: message, options: { ...options } },
+    },
+  )
+
+  try {
+    let lastText = ''
+    const fetchChatAPIOnce = async () => {
+      await fetchChatAPIProcess<Chat.ConversationResponse>({
+        prompt: message,
+        options,
+        signal: controller.signal,
+        onDownloadProgress: ({ event }) => {
+          const xhr = event.target
+          const { responseText } = xhr
+          // Always process the final line
+          const lastIndex = responseText.lastIndexOf('\n', responseText.length - 2)
+          let chunk = responseText
+          if (lastIndex !== -1)
+            chunk = responseText.substring(lastIndex)
+          try {
+            const data = JSON.parse(chunk)
+            updateChat(
+              uuid.value,
+              index,
+              {
+                dateTime: new Date().toLocaleString(),
+                text: lastText + (data.text ?? ''),
+                inversion: false,
+                error: false,
+                loading: true,
+                conversationOptions: { conversationId: data.conversationId, parentMessageId: data.id },
+                requestOptions: { prompt: message, options: { ...options } },
+              },
+            )
+
+            if (openLongReply && data.detail.choices[0].finish_reason === 'length') {
+              options.parentMessageId = data.id
+              lastText = data.text
+              message = ''
+              return fetchChatAPIOnce()
+            }
+          }
+          catch (error) {
+            //
+          }
+        },
+      })
+      updateChatSome(uuid.value, index, { loading: false })
+    }
+    await fetchChatAPIOnce()
+  }
+  catch (error: any) {
+    if (error.message === 'canceled') {
+      updateChatSome(
+        uuid.value,
+        index,
+        {
+          loading: false,
+        },
+      )
+      return
+    }
+
+    const errorMessage = error?.message ?? t('common.wrong')
+
+    updateChat(
+      uuid.value,
+      index,
+      {
+        dateTime: new Date().toLocaleString(),
+        text: errorMessage,
+        inversion: false,
+        error: true,
+        loading: false,
+        conversationOptions: null,
+        requestOptions: { prompt: message, options: { ...options } },
+      },
+    )
+  }
+  finally {
+    loading.value = false
+  }
+}
+
 function handleEnter(event: KeyboardEvent) {
   if (!isMobile.value) {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -219,11 +331,51 @@ function handleEnter(event: KeyboardEvent) {
     }
   }
 }
+
+const dialog = useDialog()
+
+function handleDelete(index: number) {
+  if (loading.value)
+    return
+
+  dialog.warning({
+    title: t('chat.deleteMessage'),
+    content: t('chat.deleteMessageConfirm'),
+    positiveText: t('common.yes'),
+    negativeText: t('common.no'),
+    onPositiveClick: () => {
+      chatStore.deleteChatByUuid(uuid.value, index)
+    },
+  })
+}
+
+function handleClear() {
+  if (loading.value)
+    return
+
+  dialog.warning({
+    title: t('chat.clearChat'),
+    content: t('chat.clearChatConfirm'),
+    positiveText: t('common.yes'),
+    negativeText: t('common.no'),
+    onPositiveClick: () => {
+      chatStore.clearChatByUuid(uuid.value)
+    },
+  })
+}
+
+const appStore = useAppStore()
+const handelBack = () => {
+  appStore.setSiderCollapsed(false)
+}
 </script>
 
 <template>
-  <div class="right h-full light:bg-[#F3F3F3] dark:bg-[#111111] transition-all">
-    <div class="top text-sm font-bold text-gray-900">
+  <div class="right h-full bg-[#F3F3F3] dark:bg-[#111111] transition-all">
+    <NIcon v-if="isMobile" class="back" size="20" @click="handelBack">
+      <ChevronBack />
+    </NIcon>
+    <div :class="isMobile ? 'justify-center' : ''" class="top text-sm font-bold w-full">
       {{ currentChatHistory?.title ?? '' }}
     </div>
     <div ref="scrollRef" class="chat-content">
@@ -235,36 +387,48 @@ function handleEnter(event: KeyboardEvent) {
         :inversion="item.inversion"
         :loading="item.loading"
         :text="item.text"
+        @delete="handleDelete(index)"
+        @regenerate="onRegenerate(index)"
       />
     </div>
-    <div class="chat-input">
+    <div :style="isMobile ? 'height:100px' : 'height:200px'" class="chat-input">
       <div class="chat-input-top">
         <div>
           <NIcon
             :color="usingContext ? '#4b9e5f' : '#a8071a'"
-            class="mr-4" size="24"
+            class="mr-3" size="24"
             @click="toggleUsingContext"
           >
             <TimeOutline />
           </NIcon>
-          <NIcon class="mr-4" color="#606266" size="24">
+          <NIcon color="#606266" size="24" @click="handleClear">
             <TrashOutline />
           </NIcon>
         </div>
+        <n-input
+          v-if="isMobile"
+          v-model:value="prompt"
+          :placeholder="t('chat.placeholderMobile')"
+          class="input phoneInput"
+          rows="1"
+          style="width: 210px"
+          type="textarea"
+          @keypress="handleEnter"
+        />
         <n-button size="small" type="primary" @click="handleSubmit">
           <template #icon>
             <n-icon>
               <Send />
             </n-icon>
           </template>
-          发 送
+          <span v-if="!isMobile">{{ t('chat.sending') }}</span>
         </n-button>
       </div>
-      <div>
+      <div v-if="!isMobile">
         <n-input
           v-model:value="prompt"
+          :placeholder="t('chat.placeholder')"
           class="input"
-          placeholder="来说点什么吧...（Shift + Enter = 换行）"
           rows="6"
           type="textarea"
           @keypress="handleEnter"
@@ -280,13 +444,20 @@ function handleEnter(event: KeyboardEvent) {
 	flex-direction: column;
 	justify-content: space-between;
 
+	.back {
+		position: absolute;
+		top: 20px;
+		left: 20px;
+	}
+
 	.top {
 		display: flex;
 		height: 60px;
 		align-items: center;
-		border-bottom: 2px solid #E0E0E0;
+		border-bottom: 1px solid #4b5563;
 		padding: 0 20px 0 20px;
 		box-sizing: border-box;
+
 	}
 
 	.chat-content {
@@ -300,8 +471,7 @@ function handleEnter(event: KeyboardEvent) {
 
 	.chat-input {
 		width: 100%;
-		height: 200px;
-		border-top: 2px solid #E0E0E0;
+		border-top: 1px solid #4b5563;
 
 		.chat-input-top {
 			width: 100%;
@@ -310,13 +480,16 @@ function handleEnter(event: KeyboardEvent) {
 			box-sizing: border-box;
 			justify-content: space-between;
 			align-items: center;
+			border-bottom: 1px solid #4b5563;
 		}
 
 		.input {
-			background: #F3F3F3;
 			border: none !important;
 			transition: 0s !important;
+		}
 
+		.phoneInput {
+			font-size: 12px;
 		}
 
 		:deep(.n-input) {
@@ -331,7 +504,6 @@ function handleEnter(event: KeyboardEvent) {
 
 		:deep(.n-input__border) {
 			display: none;
-
 		}
 
 	}

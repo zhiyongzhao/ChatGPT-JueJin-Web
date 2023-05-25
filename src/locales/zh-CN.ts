@@ -29,7 +29,8 @@ export default {
   },
   chat: {
     newChatButton: '新建聊天',
-    placeholder: '来说点什么吧...（Shift + Enter = 换行，"/" 触发提示词）',
+    oldVersion: '旧版入口',
+    placeholder: '来说点什么吧...（Shift + Enter = 换行）',
     placeholderMobile: '来说点什么...',
     copy: '复制',
     copied: '复制成功',
@@ -49,6 +50,7 @@ export default {
     clearHistoryConfirm: '确定清空聊天记录?',
     preview: '预览',
     showRawText: '显示原文',
+    sending: '发送',
   },
   setting: {
     setting: '设置',
@@ -72,6 +74,12 @@ export default {
     httpsProxy: 'HTTPS Proxy',
     balance: 'API余额',
     monthlyUsage: '本月使用量',
+    namePlaceholder: '请输入名称',
+    invitationCode: '邀请码',
+    invitationCodePlaceholder: '请输入邀请码',
+    QRCode: '长按/扫描上方二维码，给公众号发送：邀请码，自动获取',
+    problemFeedback: '问题反馈',
+    wechat: '微信联系',
   },
   store: {
     siderButton: '提示词商店',

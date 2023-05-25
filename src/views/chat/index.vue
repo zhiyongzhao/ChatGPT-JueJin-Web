@@ -1,20 +1,41 @@
 <script lang="ts" setup>
+import { computed, ref } from 'vue' // 聊天部分，聊天内容显示，聊天框操作
 import Sider from './components/Sider.vue' // 侧边栏部分。用户头像。chatgpt聊天对象操作
-import Chat from './components/Chat.vue' // 聊天部分，聊天内容显示，聊天框操作
+import Chat from './components/Chat.vue'
+import { useBasicLayout } from '@/hooks/useBasicLayout'
+import { useAppStore } from '@/store'
+
+const { isMobile } = useBasicLayout() // 是否移动端
+
+const appStore = useAppStore()
+const collapsed = computed(() => appStore.siderCollapsed)
+
+const getMobileClass = computed(() => {
+  if (isMobile.value)
+    return ['rounded-none', 'shadow-none']
+  return ['border', 'rounded-lg', 'shadow-md', 'dark:border-neutral-800']
+})
+
+const active = ref(false)
 </script>
 
 <!-- 页面布局 -->
 <template>
-  <div class="flex h-full p-4">
-    <div class="border flex h-full w-full">
+  <div :class="[isMobile ? 'p-0' : 'p-4']" class="flex h-full">
+    <div :class="getMobileClass" class=" flex h-full w-full">
       <n-layout has-sider>
         <!-- 侧边栏部分 -->
-        <n-layout-sider width="350px">
+        <n-layout-sider :width="isMobile ? '100%' : '350px'">
           <Sider />
         </n-layout-sider>
         <!-- 聊天内容部分 -->
-        <n-layout>
+        <n-layout v-if="!isMobile">
           <Chat />
+        </n-layout>
+        <n-layout v-if="isMobile">
+          <n-drawer v-model:show="collapsed" placement="right" width="100%">
+            <Chat />
+          </n-drawer>
         </n-layout>
       </n-layout>
     </div>
@@ -23,8 +44,7 @@ import Chat from './components/Chat.vue' // 聊天部分，聊天内容显示，
 
 <style lang="less" scoped>
 .border {
-	border: 2px solid #E0E0E0;
-	border-radius: 20px;
+	border: 1px solid #4b5563;
 	overflow: hidden;
 
 	:deep(.n-layout-scroll-container) {
@@ -33,7 +53,7 @@ import Chat from './components/Chat.vue' // 聊天部分，聊天内容显示，
 
 	.Sider {
 		width: 350px;
-		border-right: 2px solid #E0E0E0;
+		border-right: 1px solid #4b5563;
 		box-sizing: border-box;
 		position: relative;
 	}
@@ -41,7 +61,7 @@ import Chat from './components/Chat.vue' // 聊天部分，聊天内容显示，
 	.right {
 		flex: 1;
 		box-sizing: border-box;
-		border-left: 2px solid #E0E0E0;
+		border-left: 1px solid #4b5563;
 	}
 }
 </style>

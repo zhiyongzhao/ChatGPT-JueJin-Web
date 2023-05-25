@@ -26,13 +26,11 @@ function isActive(uuid: string) {
 
 // 选中聊天对象
 async function handleSelect({ uuid }: Chat.History) {
-  if (isActive(uuid))
+  if (isActive(uuid) && !isMobile)
     return
-
   if (chatStore.active)
     chatStore.updateHistory(chatStore.active, { isEdit: false })
   await chatStore.setActive(uuid)
-
   if (isMobile.value)
     appStore.setSiderCollapsed(true)
 }
@@ -59,6 +57,12 @@ function handleEnter({ uuid }: Chat.History, isEdit: boolean, event: KeyboardEve
   if (event.key === 'Enter')
     chatStore.updateHistory(uuid, { isEdit })
 }
+
+const getMobileClass = (uuid: string) => {
+  if (isActive(uuid) && !isMobile.value)
+    return ['bg-[#DEDEDE]', 'dark:bg-[#303030]']
+  return ['']
+}
 </script>
 
 <template>
@@ -76,11 +80,10 @@ function handleEnter({ uuid }: Chat.History, isEdit: boolean, event: KeyboardEve
       <template v-else>
         <div
           v-for="(item, index) of dataSources" :key="index"
-          :class="isActive(item.uuid) ? 'isActive' : ''"
-          class="gpt-list"
+          class="gpt-list hover:bg-[#DEDEDE] dark:bg-[#191919] dark:hover:bg-[#303030]"
           @click="handleSelect(item)"
         >
-          <div class="item">
+          <div :class="getMobileClass(item.uuid)" class="item ">
             <!-- 头像 -->
             <img class="logo" src="@/assets/logo.png">
 
@@ -103,14 +106,14 @@ function handleEnter({ uuid }: Chat.History, isEdit: boolean, event: KeyboardEve
             </NIcon>
 
             <!-- 编辑按钮 -->
-            <NIcon v-if="!item.isEdit" class="mr-2" color="#606266" size="20">
+            <NIcon v-if="!item.isEdit" class="mr-2 text-[#606266] dark:text-[#e4e4e7]" size="20">
               <CreateOutline @click="handleEdit(item, true, $event)" />
             </NIcon>
 
             <!-- 删除按钮 -->
             <NPopconfirm v-if="!item.isEdit" placement="bottom" @positive-click="handleDeleteDebounce(index, $event)">
               <template #trigger>
-                <NIcon color="#606266" size="20">
+                <NIcon class="text-[#606266] dark:text-[#e4e4e7]" size="20">
                   <TrashOutline />
                 </NIcon>
               </template>
@@ -140,12 +143,8 @@ function handleEnter({ uuid }: Chat.History, isEdit: boolean, event: KeyboardEve
 		padding: 0 20px 0 20px;
 		box-sizing: border-box;
 		height: 60px;
-		border-bottom: 1px solid #E0E0E0;
+		border-bottom: 1px solid #4b5563;
 		transition: 0.3s;
-
-		&:hover {
-			background: #DEDEDE;
-		}
 
 		.chat-name {
 			flex: 1;

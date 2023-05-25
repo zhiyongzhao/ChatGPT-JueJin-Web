@@ -29,7 +29,8 @@ export default {
   },
   chat: {
     newChatButton: '新增對話',
-    placeholder: '來說點什麼...（Shift + Enter = 換行，"/" 觸發提示詞）',
+    oldVersion: '舊版入口',
+    placeholder: '來說點什麼...（Shift + Enter = 換行）',
     placeholderMobile: '來說點什麼...',
     copy: '複製',
     copied: '複製成功',
@@ -49,6 +50,7 @@ export default {
     clearHistoryConfirm: '確定清除紀錄?',
     preview: '預覽',
     showRawText: '顯示原文',
+    sending: '發送',
   },
   setting: {
     setting: '設定',
@@ -72,6 +74,12 @@ export default {
     httpsProxy: 'HTTPS Proxy',
     balance: 'API Credit 餘額',
     monthlyUsage: '本月使用量',
+    namePlaceholder: '請輸入名稱',
+    invitationCode: '邀請碼',
+    invitationCodePlaceholder: '請輸入邀請碼',
+    QRCode: '長按/掃描上方二維碼，給公眾號發送：邀請碼，自動獲取',
+    problemFeedback: '問題迴響',
+    wechat: '微信聯系',
   },
   store: {
     siderButton: '提示詞商店',
