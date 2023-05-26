@@ -36,7 +36,7 @@ function handleAdd() {
 <template>
   <div class="h-full dark:bg-[#191919] transition-all chatList">
     <!--		用户信息部分 -->
-    <div class="tx">
+    <div class="tx border-b border-[#DCDFE6] dark:border-neutral-800">
       <NAvatar
         :src="userInfo.avatar"
         round
@@ -85,7 +85,6 @@ function handleAdd() {
 	display: flex;
 	height: 60px;
 	align-items: center;
-	border-bottom: 1px solid #4b5563;
 	padding: 0 20px 0 20px;
 	box-sizing: border-box;
 

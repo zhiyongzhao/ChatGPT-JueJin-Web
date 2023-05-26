@@ -80,10 +80,10 @@ const getMobileClass = (uuid: string) => {
       <template v-else>
         <div
           v-for="(item, index) of dataSources" :key="index"
-          class="gpt-list hover:bg-[#DEDEDE] dark:bg-[#191919] dark:hover:bg-[#303030]"
+          class="gpt-list hover:bg-[#DEDEDE] dark:bg-[#191919] dark:hover:bg-[#303030] "
           @click="handleSelect(item)"
         >
-          <div :class="getMobileClass(item.uuid)" class="item ">
+          <div :class="getMobileClass(item.uuid)" class="item border-b border-[#DCDFE6] dark:border-neutral-800">
             <!-- 头像 -->
             <img class="logo" src="@/assets/logo.png">
 
@@ -143,7 +143,6 @@ const getMobileClass = (uuid: string) => {
 		padding: 0 20px 0 20px;
 		box-sizing: border-box;
 		height: 60px;
-		border-bottom: 1px solid #4b5563;
 		transition: 0.3s;
 
 		.chat-name {

@@ -12,8 +12,8 @@ const collapsed = computed(() => appStore.siderCollapsed)
 
 const getMobileClass = computed(() => {
   if (isMobile.value)
-    return ['rounded-none', 'shadow-none']
-  return ['border', 'rounded-lg', 'shadow-md', 'dark:border-neutral-800']
+    return ['rounded-none', 'shadow-none', 'border-0']
+  return ['layout', 'rounded-lg', 'shadow-md']
 })
 
 const active = ref(false)
@@ -22,10 +22,13 @@ const active = ref(false)
 <!-- 页面布局 -->
 <template>
   <div :class="[isMobile ? 'p-0' : 'p-4']" class="flex h-full">
-    <div :class="getMobileClass" class=" flex h-full w-full">
+    <div :class="getMobileClass" class=" flex h-full w-full border border-[#DCDFE6] dark:border-neutral-800">
       <n-layout has-sider>
         <!-- 侧边栏部分 -->
-        <n-layout-sider :width="isMobile ? '100%' : '350px'">
+        <n-layout-sider
+          :class="isMobile ? 'border-0' : 'border-r'" :width="isMobile ? '100%' : '350px'"
+          class=" border-[#DCDFE6] dark:border-neutral-800"
+        >
           <Sider />
         </n-layout-sider>
         <!-- 聊天内容部分 -->
@@ -43,25 +46,12 @@ const active = ref(false)
 </template>
 
 <style lang="less" scoped>
-.border {
-	border: 1px solid #4b5563;
+.layout {
 	overflow: hidden;
 
 	:deep(.n-layout-scroll-container) {
 		overflow: visible;
 	}
 
-	.Sider {
-		width: 350px;
-		border-right: 1px solid #4b5563;
-		box-sizing: border-box;
-		position: relative;
-	}
-
-	.right {
-		flex: 1;
-		box-sizing: border-box;
-		border-left: 1px solid #4b5563;
-	}
 }
 </style>

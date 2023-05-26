@@ -10,6 +10,9 @@ import { useAppStore, useChatStore } from '@/store' // 聊天对象信息
 import { useBasicLayout } from '@/hooks/useBasicLayout' // 监听是否是移动端
 import { fetchChatAPIProcess } from '@/api' // 消息发送接口
 import { t } from '@/locales' // 语言
+import uesPromptJson from '@/assets/prompt.json'
+
+const promptJson: Record<string, any> = uesPromptJson.prompts
 
 const { usingContext, toggleUsingContext } = useUsingContext() // 消息模式
 
@@ -368,6 +371,58 @@ const appStore = useAppStore()
 const handelBack = () => {
   appStore.setSiderCollapsed(false)
 }
+
+const promptsJson: Record<string, any> = uesPromptJson.prompts
+
+const promptType = [
+  {
+    value: 'programPrompt',
+    label: '编程',
+  },
+  {
+    value: 'translatePrompt',
+    label: '翻译',
+  },
+  {
+    value: 'actPrompt',
+    label: '充当',
+  },
+  {
+    value: 'playPrompt',
+    label: '扮演',
+  },
+]
+
+const searchOptions = computed(() => {
+  if (prompt.value.startsWith('/')) {
+    return promptType.flatMap(({ value, label }) => {
+      const children = (promptsJson[value] ?? []).map(({ promptName, promptVule }: {
+        promptName: string
+        promptVule: string
+      }) => ({
+        promptName,
+        value: promptVule,
+        key: promptVule,
+        label: promptVule,
+      }))
+
+      return {
+        type: 'group',
+        label,
+        key: label,
+        children,
+      }
+    })
+  }
+  else {
+    return []
+  }
+})
+
+// value反渲染key
+const renderLabel = (option: { promptName: string; label: string }) => {
+  return [option.promptName || option.label]
+}
 </script>
 
 <template>
@@ -375,7 +430,10 @@ const handelBack = () => {
     <NIcon v-if="isMobile" class="back" size="20" @click="handelBack">
       <ChevronBack />
     </NIcon>
-    <div :class="isMobile ? 'justify-center' : ''" class="top text-sm font-bold w-full">
+    <div
+      :class="isMobile ? 'justify-center' : ''"
+      class="top text-sm font-bold w-full  border-b border-[#DCDFE6] dark:border-neutral-800"
+    >
       {{ currentChatHistory?.title ?? '' }}
     </div>
     <div ref="scrollRef" class="chat-content">
@@ -391,8 +449,11 @@ const handelBack = () => {
         @regenerate="onRegenerate(index)"
       />
     </div>
-    <div :style="isMobile ? 'height:100px' : 'height:200px'" class="chat-input">
-      <div class="chat-input-top">
+    <div
+      :style="isMobile ? 'height:100px' : 'height:200px'"
+      class="chat-input border-t  border-[#DCDFE6] dark:border-neutral-800"
+    >
+      <div class="chat-input-top border-b border-[#DCDFE6] dark:border-neutral-800">
         <div>
           <NIcon
             :color="usingContext ? '#4b9e5f' : '#a8071a'"
@@ -405,16 +466,26 @@ const handelBack = () => {
             <TrashOutline />
           </NIcon>
         </div>
-        <n-input
+        <NAutoComplete
           v-if="isMobile"
           v-model:value="prompt"
-          :placeholder="t('chat.placeholderMobile')"
-          class="input phoneInput"
-          rows="1"
-          style="width: 210px"
-          type="textarea"
-          @keypress="handleEnter"
-        />
+
+          :options="searchOptions" :render-label="renderLabel" style="width: 65%"
+        >
+          <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }">
+            <NInput
+
+              :placeholder="t('chat.placeholderMobile')"
+              :value="slotValue"
+              rows="1"
+              type="textarea"
+              @blur="handleBlur"
+              @focus="handleFocus"
+              @input="handleInput"
+              @keypress="handleEnter"
+            />
+          </template>
+        </NAutoComplete>
         <n-button size="small" type="primary" @click="handleSubmit">
           <template #icon>
             <n-icon>
@@ -425,14 +496,31 @@ const handelBack = () => {
         </n-button>
       </div>
       <div v-if="!isMobile">
-        <n-input
-          v-model:value="prompt"
-          :placeholder="t('chat.placeholder')"
-          class="input"
-          rows="6"
-          type="textarea"
-          @keypress="handleEnter"
-        />
+        <NAutoComplete
+          v-model:value="prompt" :options="searchOptions" :render-label="renderLabel"
+        >
+          <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }">
+            <NInput
+              ref="inputRef"
+              :placeholder="t('chat.placeholder')"
+              :value="slotValue"
+              rows="6"
+              type="textarea"
+              @blur="handleBlur"
+              @focus="handleFocus"
+              @input="handleInput"
+              @keypress="handleEnter"
+            />
+          </template>
+        </NAutoComplete>
+        <!--        <n-input -->
+        <!--          v-model:value="prompt" -->
+        <!--          :placeholder="t('chat.placeholder')" -->
+        <!--          class="input" -->
+        <!--          rows="6" -->
+        <!--          type="textarea" -->
+        <!--          @keypress="handleEnter" -->
+        <!--        /> -->
       </div>
     </div>
   </div>
@@ -454,7 +542,6 @@ const handelBack = () => {
 		display: flex;
 		height: 60px;
 		align-items: center;
-		border-bottom: 1px solid #4b5563;
 		padding: 0 20px 0 20px;
 		box-sizing: border-box;
 
@@ -471,7 +558,6 @@ const handelBack = () => {
 
 	.chat-input {
 		width: 100%;
-		border-top: 1px solid #4b5563;
 
 		.chat-input-top {
 			width: 100%;
@@ -480,7 +566,6 @@ const handelBack = () => {
 			box-sizing: border-box;
 			justify-content: space-between;
 			align-items: center;
-			border-bottom: 1px solid #4b5563;
 		}
 
 		.input {
