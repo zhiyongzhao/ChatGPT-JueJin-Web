@@ -81,20 +81,24 @@ const getMobileClass = (uuid: string) => {
         <div
           v-for="(item, index) of dataSources" :key="index"
           class="gpt-list hover:bg-[#DEDEDE] dark:bg-[#191919] dark:hover:bg-[#303030] "
-          @click="handleSelect(item)"
+          @click.prevent="handleSelect(item)"
         >
           <div :class="getMobileClass(item.uuid)" class="item border-b border-[#DCDFE6] dark:border-neutral-800">
             <!-- 头像 -->
-            <img class="logo" src="@/assets/logo.png">
+            <img
+              class="logo"
+              src="http://aijuejin01-x-com.img.abc188.com/static/upload/image/20230526/1685084598202783.png"
+            >
 
             <!-- title编辑输入框 -->
             <NInput
               v-if="item.isEdit"
-              v-model:value="item.title" size="tiny"
-              @keypress="handleEnter(item, false, $event)"
+              v-model:value="item.title"
+              size="tiny" @keypress="handleEnter(item, false, $event)"
+              @click.stop
             />
             <div v-else class="chat-name">
-              <span class="text-base font-bold">{{ item.title }}</span>
+              <span class="w-48 flex text-base font-bold truncate">{{ item.title }}</span>
               <p class="text-xs text-[#A8ABB2] mt-0.5 truncate w-48">
                 {{ chatStore.getChatLastText(item.uuid) }}
               </p>
@@ -102,12 +106,12 @@ const getMobileClass = (uuid: string) => {
 
             <!-- 保存按钮 -->
             <NIcon v-if="item.isEdit" class="mr-2" size="20">
-              <CheckmarkSharp @click="handleEdit(item, false, $event)" />
+              <CheckmarkSharp @click.stop="handleEdit(item, false, $event)" />
             </NIcon>
 
             <!-- 编辑按钮 -->
             <NIcon v-if="!item.isEdit" class="mr-2 text-[#606266] dark:text-[#e4e4e7]" size="20">
-              <CreateOutline @click="handleEdit(item, true, $event)" />
+              <CreateOutline @click.stop="handleEdit(item, true, $event)" />
             </NIcon>
 
             <!-- 删除按钮 -->

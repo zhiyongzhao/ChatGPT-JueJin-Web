@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, defineAsyncComponent, ref } from 'vue' // 引入计算属性，创建组件对象，ref对象
-import { SettingsOutline } from '@vicons/ionicons5' // 引入icon
+import { Close, SettingsOutline } from '@vicons/ionicons5' // 引入icon
 import List from './List.vue' // chat聊天对象list组件
 import { t } from '@/locales' // 语言转译方法
 
@@ -21,15 +21,16 @@ const Setting = defineAsyncComponent(() => import('@/components/common/Setting/i
 
 const chatStore = useChatStore() // 聊天对象list
 
-const des = () => {
-  return `${t('setting.problemFeedback')} <a href="https://github.com/Chanzhaoyu/chatgpt-bot" class="text-blue-500" target="_blank" >${t('setting.wechat')}</a>`
-}
-
 // 新建聊天的方法
 function handleAdd() {
   chatStore.addHistory({ title: 'New Chat', uuid: `${Date.now()}`, isEdit: false })
   if (isMobile)
     appStore.setSiderCollapsed(true)
+}
+
+const showModal = ref<boolean>(false)
+const handelPopup = () => {
+  showModal.value = true
 }
 </script>
 
@@ -44,7 +45,12 @@ function handleAdd() {
       />
       <div>
         <span class="text-base font-bold text-green-500">{{ userInfo.name }}</span>
-        <span class="text-xs" v-html="des()" />
+        <span class="text-xs">{{ t('setting.problemFeedback') }}
+          <span
+            class="text-blue-500"
+            @click="handelPopup"
+          >{{ t('setting.wechat') }}</span>
+        </span>
       </div>
       <NIcon size="20" @click="show = true">
         <SettingsOutline />
@@ -64,13 +70,36 @@ function handleAdd() {
       >
         {{ t('chat.newChatButton') }}
       </n-button>
-      <n-button size="large" tertiary type="primary">
-        {{ t('chat.oldVersion') }}
-      </n-button>
+      <!--      <n-button size="large" tertiary type="primary"> -->
+      <!--        {{ t('chat.oldVersion') }} -->
+      <!--      </n-button> -->
     </div>
 
     <!--		弹窗组件 -->
     <Setting v-if="show" v-model:visible="show" />
+
+    <n-modal v-model:show="showModal">
+      <n-card
+        :bordered="false"
+        aria-modal="true"
+        role="dialog"
+        size="huge"
+        style="width: 600px"
+        title="获取更多使用机会"
+      >
+        <template #header-extra>
+          <NIcon size="30" @click="showModal = false">
+            <Close />
+          </NIcon>
+        </template>
+        <div class="popup-img">
+          <img src="https://aijuejin01-x-com.img.abc188.com/static/upload/image/20230526/1685088357789526.png">
+        </div>
+        <template #footer>
+          扫码/长按识别二维码，添加微信，反馈问题，谢谢！
+        </template>
+      </n-card>
+    </n-modal>
   </div>
 </template>
 
@@ -109,5 +138,18 @@ function handleAdd() {
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
+}
+
+.popup-img {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	img {
+		width: 200px;
+		height: 200px;
+		border: 1px solid #DCDFE6;
+	}
 }
 </style>

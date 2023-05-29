@@ -26,8 +26,11 @@ const active = ref(false)
       <n-layout has-sider>
         <!-- 侧边栏部分 -->
         <n-layout-sider
-          :class="isMobile ? 'border-0' : 'border-r'" :width="isMobile ? '100%' : '350px'"
-          class=" border-[#DCDFE6] dark:border-neutral-800"
+          :class="isMobile ? 'border-0' : 'border-r'"
+          :collapsed-width="0"
+          :show-trigger="isMobile ? false : 'arrow-circle'"
+          :width="isMobile ? '100%' : '350px'"
+          class="border-[#DCDFE6] dark:border-neutral-800"
         >
           <Sider />
         </n-layout-sider>

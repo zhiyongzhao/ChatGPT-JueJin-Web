@@ -3,6 +3,7 @@ import { ref } from 'vue' // 引入ref对象
 import { useRouter } from 'vue-router' // 引入router对象
 import type { FormInst } from 'naive-ui' // 引入formInst变量类型
 import { useLoadingBar, useMessage } from 'naive-ui' // 引入加载条，信息提示组件
+import { NotificationsSharp } from '@vicons/ionicons5'
 import { t } from '@/locales' // 语言转译方法
 import type { UserInfo } from '@/store/modules/user/helper' // 用户信息类型
 import { useAuthStore, useUserStore } from '@/store' // 引入token信息， 用户信息
@@ -47,7 +48,7 @@ const rules = {
 // 更新用户信息
 const updateUserInfo = (options: Partial<UserInfo>) => {
   userStore.updateUserInfo(options)
-  message.success(t('common.success'))
+  message.success(t('common.verifySuccess'))
 }
 
 // 验证方法
@@ -83,18 +84,16 @@ const handleSubmit = () => {
   <div class="login h-full w-full p-3">
     <!-- 公众号二维码 -->
     <img alt="" class="qrCode" src="@/assets/qrcode.jpeg">
-    <p class="qrCodeText">
-      {{ t('setting.QRCode') }}
-    </p>
+
     <!-- 表单部分 -->
     <n-form
       ref="formRef"
-      :label-placement="isMobile ? 'top' : 'left'"
       :model="model"
       :rules="rules"
       :style="{
         width: isMobile ? '100%' : '600px',
       }"
+      label-placement="left"
       label-width="auto"
       require-mark-placement="right-hanging"
     >
@@ -105,6 +104,16 @@ const handleSubmit = () => {
         <n-input v-model:value="model.invitationCode" :placeholder="t('setting.invitationCodePlaceholder')" />
       </n-form-item>
     </n-form>
+
+    <n-tag :bordered="false" class="qrCodeText" round size="small" type="success">
+      {{ t('setting.QRCode') }}
+      <template #icon>
+        <NIcon>
+          <NotificationsSharp />
+        </NIcon>
+      </template>
+    </n-tag>
+
     <n-button
       :style="{
         width: isMobile ? '70%' : '300px',
@@ -129,12 +138,11 @@ const handleSubmit = () => {
 	.qrCode {
 		width: 150px;
 		height: 150px;
-		margin-bottom: 10px;
+		margin-bottom: 20px;
 	}
 
 	.qrCodeText {
-		margin-bottom: 30px;
-		color: #A8ABB2;
+		margin-bottom: 20px;
 	}
 }
 </style>

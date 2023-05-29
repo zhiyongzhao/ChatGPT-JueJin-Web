@@ -63,7 +63,7 @@ const languageOptions: { label: string; key: Language; value: Language }[] = [
 
 function updateUserInfo(options: Partial<UserInfo>) {
   userStore.updateUserInfo(options)
-  ms.success(t('common.success'))
+  ms.success(t('common.saveSuccess'))
 }
 
 function handleReset() {

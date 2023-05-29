@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { ChevronBack, Send, TimeOutline, TrashOutline } from '@vicons/ionicons5' // 引入icon
+import { ChevronBack, RadioButtonOn, Send } from '@vicons/ionicons5' // 引入icon
 import { computed, ref, watch } from 'vue' // 引入计算属性和ref
-import { useDialog } from 'naive-ui'
+import { useDialog, useMessage } from 'naive-ui'
+import html2canvas from 'html2canvas'
 import Message from './Message/index.vue' // 引入消息组件
 import { useChat } from './hooks/useChat' // 操作消息的方法
 import { useScroll } from './hooks/useScroll' // 屏幕滚动的方法
@@ -11,6 +12,7 @@ import { useBasicLayout } from '@/hooks/useBasicLayout' // 监听是否是移动
 import { fetchChatAPIProcess } from '@/api' // 消息发送接口
 import { t } from '@/locales' // 语言
 import uesPromptJson from '@/assets/prompt.json'
+import { HoverButton, SvgIcon } from '@/components/common'
 
 const promptJson: Record<string, any> = uesPromptJson.prompts
 
@@ -32,15 +34,19 @@ const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll() // �
 
 const chatStore = useChatStore() // 聊天对象信息
 
+const ms = useMessage()
+
 const uuid = ref(chatStore.active || '')
 watch(
   () => chatStore.active,
   (news) => {
-    uuid.value = `${chatStore.active}` // 获取当前选中的聊天对象id
+    uuid.value = `${news}` // 获取当前选中的聊天对象id
   },
 )
 
-const dataSources = computed(() => chatStore.getChatByUuid(uuid.value)) // 聊天对象list
+const dataSources = computed(() => {
+  return chatStore.getChatByUuid(uuid.value)
+}) // 聊天对象list
 
 const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !!item.conversationOptions))) // 聊天记录
 
@@ -423,6 +429,55 @@ const searchOptions = computed(() => {
 const renderLabel = (option: { promptName: string; label: string }) => {
   return [option.promptName || option.label]
 }
+
+function handleStop() {
+  if (loading.value) {
+    controller.abort()
+    loading.value = false
+  }
+}
+
+function handleExport() {
+  if (loading.value)
+    return
+
+  const d = dialog.warning({
+    title: t('chat.exportImage'),
+    content: t('chat.exportImageConfirm'),
+    positiveText: t('common.yes'),
+    negativeText: t('common.no'),
+    onPositiveClick: async () => {
+      try {
+        d.loading = true
+        const ele = document.getElementById('image-wrapper')
+        const canvas = await html2canvas(ele as HTMLDivElement, {
+          useCORS: true,
+        })
+        const imgUrl = canvas.toDataURL('image/png')
+        const tempLink = document.createElement('a')
+        tempLink.style.display = 'none'
+        tempLink.href = imgUrl
+        tempLink.setAttribute('download', 'chat-shot.png')
+        if (typeof tempLink.download === 'undefined')
+          tempLink.setAttribute('target', '_blank')
+
+        document.body.appendChild(tempLink)
+        tempLink.click()
+        document.body.removeChild(tempLink)
+        window.URL.revokeObjectURL(imgUrl)
+        d.loading = false
+        ms.success(t('chat.exportSuccess'))
+        Promise.resolve()
+      }
+      catch (error: any) {
+        ms.error(t('chat.exportFailed'))
+      }
+      finally {
+        d.loading = false
+      }
+    },
+  })
+}
 </script>
 
 <template>
@@ -437,34 +492,59 @@ const renderLabel = (option: { promptName: string; label: string }) => {
       {{ currentChatHistory?.title ?? '' }}
     </div>
     <div ref="scrollRef" class="chat-content">
-      <Message
-        v-for="(item, index) of dataSources"
-        :key="index"
-        :date-time="item.dateTime"
-        :error="item.error"
-        :inversion="item.inversion"
-        :loading="item.loading"
-        :text="item.text"
-        @delete="handleDelete(index)"
-        @regenerate="onRegenerate(index)"
-      />
+      <div id="image-wrapper">
+        <template v-if="!dataSources.length">
+          <div class="flex items-center justify-center mt-4 text-center text-stone-500 dark:text-neutral-300">
+            <SvgIcon class="mr-2 text-3xl" icon="ri:bubble-chart-fill" />
+            <span>开始和ChatGPT对话吧~</span>
+          </div>
+        </template>
+        <template v-else>
+          <Message
+            v-for="(item, index) of dataSources"
+            :key="index"
+            :date-time="item.dateTime"
+            :error="item.error"
+            :inversion="item.inversion"
+            :loading="item.loading"
+            :text="item.text"
+            @delete="handleDelete(index)"
+            @regenerate="onRegenerate(index)"
+          />
+          <div class="sticky bottom-0 left-0 flex justify-center">
+            <NButton v-if="loading" type="primary" @click="handleStop">
+              <template #icon>
+                <n-icon>
+                  <RadioButtonOn />
+                </n-icon>
+              </template>
+              停止响应
+            </NButton>
+          </div>
+        </template>
+      </div>
     </div>
     <div
       :style="isMobile ? 'height:100px' : 'height:200px'"
       class="chat-input border-t  border-[#DCDFE6] dark:border-neutral-800"
     >
       <div class="chat-input-top border-b border-[#DCDFE6] dark:border-neutral-800">
-        <div>
-          <NIcon
-            :color="usingContext ? '#4b9e5f' : '#a8071a'"
-            class="mr-3" size="24"
-            @click="toggleUsingContext"
-          >
-            <TimeOutline />
-          </NIcon>
-          <NIcon color="#606266" size="24" @click="handleClear">
-            <TrashOutline />
-          </NIcon>
+        <div class="flex">
+          <HoverButton @click="handleClear">
+            <span class="text-xl text-[#4f555e] dark:text-white">
+              <SvgIcon icon="ri:delete-bin-line" />
+            </span>
+          </HoverButton>
+          <HoverButton v-if="!isMobile" @click="handleExport">
+            <span class="text-xl text-[#4f555e] dark:text-white">
+              <SvgIcon icon="ri:download-2-line" />
+            </span>
+          </HoverButton>
+          <HoverButton v-if="!isMobile" @click="toggleUsingContext">
+            <span :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }" class="text-xl">
+              <SvgIcon icon="ri:chat-history-line" />
+            </span>
+          </HoverButton>
         </div>
         <NAutoComplete
           v-if="isMobile"
@@ -474,7 +554,6 @@ const renderLabel = (option: { promptName: string; label: string }) => {
         >
           <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }">
             <NInput
-
               :placeholder="t('chat.placeholderMobile')"
               :value="slotValue"
               rows="1"
@@ -513,14 +592,6 @@ const renderLabel = (option: { promptName: string; label: string }) => {
             />
           </template>
         </NAutoComplete>
-        <!--        <n-input -->
-        <!--          v-model:value="prompt" -->
-        <!--          :placeholder="t('chat.placeholder')" -->
-        <!--          class="input" -->
-        <!--          rows="6" -->
-        <!--          type="textarea" -->
-        <!--          @keypress="handleEnter" -->
-        <!--        /> -->
       </div>
     </div>
   </div>
