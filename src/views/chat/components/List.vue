@@ -86,8 +86,14 @@ const getMobileClass = (uuid: string) => {
           <div :class="getMobileClass(item.uuid)" class="item border-b border-[#DCDFE6] dark:border-neutral-800">
             <!-- 头像 -->
             <img
+              v-if="isActive(item.uuid)"
               class="logo"
               src="http://aijuejin01-x-com.img.abc188.com/static/upload/image/20230526/1685084598202783.png"
+            >
+            <img
+              v-else
+              class="logo"
+              src="https://aijuejin01-x-com.img.abc188.com/static/upload/image/20230530/1685417470630941.png"
             >
 
             <!-- title编辑输入框 -->
@@ -132,8 +138,8 @@ const getMobileClass = (uuid: string) => {
 
 <style lang="less" scoped>
 .logo {
-	width: 30px;
-	height: 30px;
+	width: 24px;
+	height: 24px;
 }
 
 .gpt-list {

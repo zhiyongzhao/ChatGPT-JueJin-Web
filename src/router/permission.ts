@@ -6,7 +6,7 @@ import { useAppStore } from '@/store'
 export function setupPageGuard(router: Router) {
   router.beforeEach(async (to, from, next) => {
     const appStore = useAppStore()
-    appStore.setSiderCollapsed(false)
+    appStore.setSiderCollapsed(true)
     const authStore = useAuthStoreWithout()
     if (!authStore.session) {
       try {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ChevronBack, RadioButtonOn, Send } from '@vicons/ionicons5' // 引入icon
+import { ChevronBack, Close, RadioButtonOn, Send } from '@vicons/ionicons5' // 引入icon
 import { computed, ref, watch } from 'vue' // 引入计算属性和ref
 import { useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
@@ -166,7 +166,7 @@ async function onConversation() {
     await fetchChatAPIOnce()
   }
   catch (error: any) {
-    const errorMessage = error?.message ?? t('common.wrong')
+    const errorMessage = error?.msg ?? t('common.wrong')
 
     if (error.message === 'canceled') {
       updateChatSome(
@@ -305,7 +305,7 @@ async function onRegenerate(index: number) {
       return
     }
 
-    const errorMessage = error?.message ?? t('common.wrong')
+    const errorMessage = error?.msg ?? t('common.wrong')
 
     updateChat(
       uuid.value,
@@ -478,6 +478,8 @@ function handleExport() {
     },
   })
 }
+
+const showModal = ref(false)
 </script>
 
 <template>
@@ -489,7 +491,9 @@ function handleExport() {
       :class="isMobile ? 'justify-center' : ''"
       class="top text-sm font-bold w-full  border-b border-[#DCDFE6] dark:border-neutral-800"
     >
-      {{ currentChatHistory?.title ?? '' }}
+      <span :class="isMobile ? 'text-center' : ''" class="w-1/3 line-clamp-1">{{
+        currentChatHistory?.title ?? ''
+      }}</span>
     </div>
     <div ref="scrollRef" class="chat-content">
       <div id="image-wrapper">
@@ -500,6 +504,11 @@ function handleExport() {
           </div>
         </template>
         <template v-else>
+          <div class="flex items-center justify-center my-4 text-center text-stone-500 dark:text-neutral-300">
+            <n-button round tertiary type="warning" @click="showModal = true">
+              每日免费使用5次，点击这里获取更多使用机会
+            </n-button>
+          </div>
           <Message
             v-for="(item, index) of dataSources"
             :key="index"
@@ -535,12 +544,12 @@ function handleExport() {
               <SvgIcon icon="ri:delete-bin-line" />
             </span>
           </HoverButton>
-          <HoverButton v-if="!isMobile" @click="handleExport">
+          <HoverButton @click="handleExport">
             <span class="text-xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:download-2-line" />
             </span>
           </HoverButton>
-          <HoverButton v-if="!isMobile" @click="toggleUsingContext">
+          <HoverButton @click="toggleUsingContext">
             <span :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }" class="text-xl">
               <SvgIcon icon="ri:chat-history-line" />
             </span>
@@ -594,6 +603,29 @@ function handleExport() {
         </NAutoComplete>
       </div>
     </div>
+
+    <n-modal v-model:show="showModal">
+      <n-card
+        :bordered="false"
+        aria-modal="true"
+        role="dialog"
+        size="huge"
+        style="width: 600px"
+        title="获取更多使用机会"
+      >
+        <template #header-extra>
+          <NIcon size="30" @click="showModal = false">
+            <Close />
+          </NIcon>
+        </template>
+        <div class="popup-img">
+          <img src="@/assets/qrcode.jpeg">
+        </div>
+        <template #footer>
+          扫码/长按识别二维码，添加微信，获取更多体检机会～
+        </template>
+      </n-card>
+    </n-modal>
   </div>
 </template>
 
@@ -662,6 +694,19 @@ function handleExport() {
 			display: none;
 		}
 
+	}
+}
+
+.popup-img {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	img {
+		width: 200px;
+		height: 200px;
+		border: 1px solid #DCDFE6;
 	}
 }
 </style>

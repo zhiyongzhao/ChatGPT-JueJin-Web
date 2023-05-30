@@ -3,6 +3,7 @@ import { computed, defineAsyncComponent, ref } from 'vue' // 引入计算属性�
 import { Close, SettingsOutline } from '@vicons/ionicons5' // 引入icon
 import List from './List.vue' // chat聊天对象list组件
 import { t } from '@/locales' // 语言转译方法
+import defaultAvatar from '@/assets/avatar.png'
 
 import { useBasicLayout } from '@/hooks/useBasicLayout' // 监测是否是移动端的工具
 import { useAppStore, useChatStore, useUserStore } from '@/store' // 引入token，聊天对象list，用户信息。
@@ -39,7 +40,14 @@ const handelPopup = () => {
     <!--		用户信息部分 -->
     <div class="tx border-b border-[#DCDFE6] dark:border-neutral-800">
       <NAvatar
+        v-if="userInfo.avatar"
         :src="userInfo.avatar"
+        round
+        size="large"
+      />
+      <NAvatar
+        v-else
+        :src="defaultAvatar"
         round
         size="large"
       />
@@ -65,7 +73,7 @@ const handelPopup = () => {
     <!--		操作按钮部分 -->
     <div class="foot">
       <n-button
-        secondary size="large" strong style="margin-bottom: 20px" type="primary"
+        secondary size="large" strong type="primary"
         @click="handleAdd"
       >
         {{ t('chat.newChatButton') }}
@@ -85,7 +93,7 @@ const handelPopup = () => {
         role="dialog"
         size="huge"
         style="width: 600px"
-        title="获取更多使用机会"
+        title="问题反馈"
       >
         <template #header-extra>
           <NIcon size="30" @click="showModal = false">
