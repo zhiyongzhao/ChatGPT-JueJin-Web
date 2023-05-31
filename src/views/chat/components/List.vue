@@ -1,11 +1,11 @@
 <script lang='ts' setup>
 import { computed } from 'vue' // 引入监听属性
-import { NScrollbar } from 'naive-ui' // 滚动条组件
+import { NScrollbar, useDialog } from 'naive-ui' // 滚动条组件
 import { CheckmarkSharp, CreateOutline, TrashOutline } from '@vicons/ionicons5' // 引入icon
 import { SvgIcon } from '@/components/common' // svgicon组件
 import { useAppStore, useChatStore } from '@/store' // token信息，聊天对象
 import { useBasicLayout } from '@/hooks/useBasicLayout' // // 监测是否是移动端的工具
-import { debounce } from '@/utils/functions/debounce' // 防抖方法
+import { t } from '@/locales' // 防抖方法
 
 const { isMobile } = useBasicLayout() // 是否移动端
 
@@ -46,10 +46,8 @@ function handleDelete(index: number, event?: MouseEvent | TouchEvent) {
   event?.stopPropagation()
   chatStore.deleteHistory(index)
   if (isMobile.value)
-    appStore.setSiderCollapsed(true)
+    appStore.setSiderCollapsed(false)
 }
-
-const handleDeleteDebounce = debounce(handleDelete, 100)
 
 // 保存修改
 function handleEnter({ uuid }: Chat.History, isEdit: boolean, event: KeyboardEvent) {
@@ -62,6 +60,20 @@ const getMobileClass = (uuid: string) => {
   if (isActive(uuid) && !isMobile.value)
     return ['bg-[#DEDEDE]', 'dark:bg-[#303030]']
   return ['']
+}
+
+const dialog = useDialog()
+
+function handleDel(index: number, event?: MouseEvent | TouchEvent) {
+  dialog.warning({
+    title: t('chat.deleteMessage'),
+    content: t('chat.deleteMessageConfirm'),
+    positiveText: t('common.yes'),
+    negativeText: t('common.no'),
+    onPositiveClick: () => {
+      handleDelete(index, event)
+    },
+  })
 }
 </script>
 
@@ -120,15 +132,9 @@ const getMobileClass = (uuid: string) => {
               <CreateOutline @click.stop="handleEdit(item, true, $event)" />
             </NIcon>
 
-            <!-- 删除按钮 -->
-            <NPopconfirm v-if="!item.isEdit" placement="bottom" @positive-click="handleDeleteDebounce(index, $event)">
-              <template #trigger>
-                <NIcon class="text-[#606266] dark:text-[#e4e4e7]" size="20">
-                  <TrashOutline />
-                </NIcon>
-              </template>
-              {{ $t('chat.deleteHistoryConfirm') }}
-            </NPopconfirm>
+            <NIcon class="text-[#606266] dark:text-[#e4e4e7]" size="20">
+              <TrashOutline @click.stop="handleDel(index, $event)" />
+            </NIcon>
           </div>
         </div>
       </template>

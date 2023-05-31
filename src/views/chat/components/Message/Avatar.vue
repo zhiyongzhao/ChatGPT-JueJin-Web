@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { NAvatar } from 'naive-ui'
 import { useUserStore } from '@/store'
 import { isString } from '@/utils/is'
-import defaultAvatar from '@/assets/avatar.jpg'
+import defaultAvatar from '@/assets/avatar.png'
 
 interface Props {
   image?: boolean
@@ -12,7 +12,6 @@ interface Props {
 defineProps<Props>()
 
 const userStore = useUserStore()
-
 const avatar = computed(() => userStore.userInfo.avatar)
 </script>
 

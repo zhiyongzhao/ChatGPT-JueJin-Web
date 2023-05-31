@@ -496,19 +496,19 @@ const showModal = ref(false)
       }}</span>
     </div>
     <div ref="scrollRef" class="chat-content">
-      <div id="image-wrapper">
-        <template v-if="!dataSources.length">
-          <div class="flex items-center justify-center mt-4 text-center text-stone-500 dark:text-neutral-300">
-            <SvgIcon class="mr-2 text-3xl" icon="ri:bubble-chart-fill" />
-            <span>开始和ChatGPT对话吧~</span>
-          </div>
-        </template>
-        <template v-else>
-          <div class="flex items-center justify-center my-4 text-center text-stone-500 dark:text-neutral-300">
-            <n-button round tertiary type="warning" @click="showModal = true">
-              每日免费使用5次，点击这里获取更多使用机会
-            </n-button>
-          </div>
+      <div class="flex items-center justify-center my-4 text-center text-stone-500 dark:text-neutral-300">
+        <n-button round tertiary type="warning" @click="showModal = true">
+          每日免费使用5次，点击这里获取更多使用机会
+        </n-button>
+      </div>
+      <template v-if="!dataSources.length">
+        <div class="flex items-center justify-center mt-4 text-center text-stone-500 dark:text-neutral-300">
+          <SvgIcon class="mr-2 text-3xl" icon="ri:bubble-chart-fill" />
+          <span>开始和ChatGPT对话吧~</span>
+        </div>
+      </template>
+      <template v-else>
+        <div id="image-wrapper" class="chat-msg">
           <Message
             v-for="(item, index) of dataSources"
             :key="index"
@@ -530,8 +530,8 @@ const showModal = ref(false)
               停止响应
             </NButton>
           </div>
-        </template>
-      </div>
+        </div>
+      </template>
     </div>
     <div
       :style="isMobile ? 'height:100px' : 'height:200px'"
@@ -558,7 +558,6 @@ const showModal = ref(false)
         <NAutoComplete
           v-if="isMobile"
           v-model:value="prompt"
-
           :options="searchOptions" :render-label="renderLabel" style="width: 65%"
         >
           <template #default="{ handleInput, handleBlur, handleFocus, value: slotValue }">
@@ -619,7 +618,7 @@ const showModal = ref(false)
           </NIcon>
         </template>
         <div class="popup-img">
-          <img src="@/assets/qrcode.jpeg">
+          <img src="https://aijuejin01-x-com.img.abc188.com/static/upload/image/20230526/1685088357789526.png">
         </div>
         <template #footer>
           扫码/长按识别二维码，添加微信，获取更多体检机会～
@@ -655,6 +654,14 @@ const showModal = ref(false)
 		width: 100%;
 		padding: 20px;
 		box-sizing: border-box;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.chat-msg {
+		width: 100%;
+		flex: 1;
 		overflow: hidden;
 		overflow-y: auto;
 	}
