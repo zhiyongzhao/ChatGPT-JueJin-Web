@@ -14,7 +14,7 @@ import { t } from '@/locales' // 语言
 import uesPromptJson from '@/assets/prompt.json'
 import { HoverButton, SvgIcon } from '@/components/common'
 
-const promptJson: Record<string, any> = uesPromptJson.prompts
+// const promptJson: Record<string, any> = uesPromptJson.prompts
 
 const { usingContext, toggleUsingContext } = useUsingContext() // 消息模式
 
@@ -483,32 +483,39 @@ const showModal = ref(false)
 </script>
 
 <template>
-  <div class="right h-full bg-[#F3F3F3] dark:bg-[#111111] transition-all">
-    <NIcon v-if="isMobile" class="back" size="20" @click="handelBack">
-      <ChevronBack />
-    </NIcon>
+  <div class="right h-full transition-all">
     <div
-      :class="isMobile ? 'justify-center' : ''"
-      class="top text-sm font-bold w-full  border-b border-[#DCDFE6] dark:border-neutral-800"
+      :class="isMobile ? 'justify-between' : ''"
+      class="top text-sm font-bold w-full border-b dark:border-neutral-800"
     >
-      <span :class="isMobile ? 'text-center' : ''" class="w-1/3 line-clamp-1">{{
-        currentChatHistory?.title ?? ''
-      }}</span>
+      <NIcon v-if="isMobile" class="back" size="20" @click="handelBack">
+        <ChevronBack />
+      </NIcon>
+      <span :class="isMobile ? 'text-center' : ''" class="w-1/3 line-clamp-1">
+        {{ currentChatHistory?.title ?? '' }}
+      </span>
+      <HoverButton v-if="isMobile" @click="handleExport">
+        <span class="text-xl text-[#4f555e] dark:text-white">
+          <SvgIcon icon="ri:download-2-line" />
+        </span>
+      </HoverButton>
     </div>
-    <div ref="scrollRef" class="chat-content">
-      <div class="flex items-center justify-center my-4 text-center text-stone-500 dark:text-neutral-300">
+    <div class="chat-content">
+      <div
+        class="flex items-center justify-center text-center text-stone-500 dark:text-neutral-300 absolute z-50 inset-x-0"
+      >
         <n-button round tertiary type="warning" @click="showModal = true">
           每日免费使用5次，点击这里获取更多使用机会
         </n-button>
       </div>
       <template v-if="!dataSources.length">
-        <div class="flex items-center justify-center mt-4 text-center text-stone-500 dark:text-neutral-300">
+        <div class="flex items-center justify-center mt-14 text-center text-stone-500 dark:text-neutral-300">
           <SvgIcon class="mr-2 text-3xl" icon="ri:bubble-chart-fill" />
           <span>开始和ChatGPT对话吧~</span>
         </div>
       </template>
       <template v-else>
-        <div id="image-wrapper" class="chat-msg">
+        <div id="image-wrapper" ref="scrollRef" class="chat-msg">
           <Message
             v-for="(item, index) of dataSources"
             :key="index"
@@ -535,16 +542,16 @@ const showModal = ref(false)
     </div>
     <div
       :style="isMobile ? 'height:100px' : 'height:200px'"
-      class="chat-input border-t  border-[#DCDFE6] dark:border-neutral-800"
+      class="chat-input border-t   dark:border-neutral-800"
     >
-      <div class="chat-input-top border-b border-[#DCDFE6] dark:border-neutral-800">
+      <div class="chat-input-top px-2 border-b  dark:border-neutral-800">
         <div class="flex">
           <HoverButton @click="handleClear">
             <span class="text-xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:delete-bin-line" />
             </span>
           </HoverButton>
-          <HoverButton @click="handleExport">
+          <HoverButton v-if="!isMobile" @click="handleExport">
             <span class="text-xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:download-2-line" />
             </span>
@@ -634,11 +641,11 @@ const showModal = ref(false)
 	flex-direction: column;
 	justify-content: space-between;
 
-	.back {
-		position: absolute;
-		top: 20px;
-		left: 20px;
-	}
+	//.back {
+	//	position: absolute;
+	//	top: 20px;
+	//	left: 20px;
+	//}
 
 	.top {
 		display: flex;
@@ -672,7 +679,8 @@ const showModal = ref(false)
 		.chat-input-top {
 			width: 100%;
 			display: flex;
-			padding: 10px 20px;
+			padding-top: 10px;
+			padding-bottom: 10px;
 			box-sizing: border-box;
 			justify-content: space-between;
 			align-items: center;

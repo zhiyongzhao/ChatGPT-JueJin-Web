@@ -22,7 +22,7 @@ const active = ref(false)
 <!-- 页面布局 -->
 <template>
   <div :class="[isMobile ? 'p-0' : 'p-4']" class="flex h-full">
-    <div :class="getMobileClass" class=" flex h-full w-full border border-[#DCDFE6] dark:border-neutral-800">
+    <div :class="getMobileClass" class=" flex h-full w-full border  dark:border-neutral-800">
       <n-layout has-sider>
         <!-- 侧边栏部分 -->
         <n-layout-sider
@@ -30,7 +30,7 @@ const active = ref(false)
           :collapsed-width="0"
           :show-trigger="isMobile ? false : 'arrow-circle'"
           :width="isMobile ? '100%' : '350px'"
-          class="border-[#DCDFE6] dark:border-neutral-800"
+          class=" dark:border-neutral-800"
         >
           <Sider />
         </n-layout-sider>

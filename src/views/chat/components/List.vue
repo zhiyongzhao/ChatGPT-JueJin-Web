@@ -92,10 +92,10 @@ function handleDel(index: number, event?: MouseEvent | TouchEvent) {
       <template v-else>
         <div
           v-for="(item, index) of dataSources" :key="index"
-          class="gpt-list hover:bg-[#DEDEDE] dark:bg-[#191919] dark:hover:bg-[#303030] "
+          class="gpt-list hover:bg-[#DEDEDE] dark:hover:bg-[#303030] "
           @click.prevent="handleSelect(item)"
         >
-          <div :class="getMobileClass(item.uuid)" class="item border-b border-[#DCDFE6] dark:border-neutral-800">
+          <div :class="getMobileClass(item.uuid)" class="item border-b  dark:border-neutral-800">
             <!-- 头像 -->
             <img
               v-if="isActive(item.uuid)"

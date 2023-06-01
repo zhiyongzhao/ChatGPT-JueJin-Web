@@ -36,9 +36,9 @@ const handelPopup = () => {
 </script>
 
 <template>
-  <div class="h-full dark:bg-[#191919] transition-all chatList">
+  <div class="h-full  transition-all chatList">
     <!--		用户信息部分 -->
-    <div class="tx border-b border-[#DCDFE6] dark:border-neutral-800">
+    <div class="tx border-b dark:border-neutral-800">
       <NAvatar
         v-if="userInfo.avatar"
         :src="userInfo.avatar"
