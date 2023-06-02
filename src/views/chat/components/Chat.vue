@@ -494,17 +494,17 @@ const showModal = ref(false)
       <span :class="isMobile ? 'text-center' : ''" class="w-1/3 line-clamp-1">
         {{ currentChatHistory?.title ?? '' }}
       </span>
-      <HoverButton v-if="isMobile" @click="handleExport">
+      <n-button v-if="isMobile" text @click="handleExport">
         <span class="text-xl text-[#4f555e] dark:text-white">
           <SvgIcon icon="ri:download-2-line" />
         </span>
-      </HoverButton>
+      </n-button>
     </div>
     <div class="chat-content">
       <div
         class="flex items-center justify-center text-center text-stone-500 dark:text-neutral-300 absolute z-50 inset-x-0"
       >
-        <n-button round tertiary type="warning" @click="showModal = true">
+        <n-button round type="warning" @click="showModal = true">
           每日免费使用5次，点击这里获取更多使用机会
         </n-button>
       </div>
@@ -589,7 +589,7 @@ const showModal = ref(false)
           <span v-if="!isMobile">{{ t('chat.sending') }}</span>
         </n-button>
       </div>
-      <div v-if="!isMobile">
+      <div v-if="!isMobile" class="winInput">
         <NAutoComplete
           v-model:value="prompt" :options="searchOptions" :render-label="renderLabel"
         >
@@ -641,12 +641,6 @@ const showModal = ref(false)
 	flex-direction: column;
 	justify-content: space-between;
 
-	//.back {
-	//	position: absolute;
-	//	top: 20px;
-	//	left: 20px;
-	//}
-
 	.top {
 		display: flex;
 		height: 60px;
@@ -685,29 +679,21 @@ const showModal = ref(false)
 			justify-content: space-between;
 			align-items: center;
 		}
+    .winInput{
+      :deep(.n-input) {
+        --n-border: 0px !important;
+        --n-border-hover: 0px solid #F3F3F3 !important;
+        --n-border-focus: none !important;
+        --n-caret-color: #000 !important;
+        --n-box-shadow-focus: 0 #F3F3F3 !important;
+        border: none !important;
+        transition: 0s !important;
+      }
 
-		.input {
-			border: none !important;
-			transition: 0s !important;
-		}
-
-		.phoneInput {
-			font-size: 12px;
-		}
-
-		:deep(.n-input) {
-			--n-border: 0px !important;
-			--n-border-hover: 0px solid #F3F3F3 !important;
-			--n-border-focus: none !important;
-			--n-caret-color: #000 !important;
-			--n-box-shadow-focus: 0 #F3F3F3 !important;
-			border: none !important;
-			transition: 0s !important;
-		}
-
-		:deep(.n-input__border) {
-			display: none;
-		}
+      :deep(.n-input__border) {
+        display: none;
+      }
+    }
 
 	}
 }
